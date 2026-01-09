@@ -1,6 +1,6 @@
 {
   "name": "@lizarzaburu/strapi-plugin-umami-analytics",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Dennis Lizarzaburu",
   "description": "Strapi plugin to display Umami analytics in admin panel with permission-based access control and automatic CSP configuration",
   "type": "commonjs",

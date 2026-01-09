@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-09
+
+### Fixed
+- Corrected middleware structure according to Strapi documentation
+- Fixed config retrieval to use proper Strapi plugin API (`strapi.plugin('umami-analytics').config()`)
+- Added proper config definition with validation in `server/config/index.ts`
+
+### Changed
+- Simplified README, removed unnecessary sections (development, troubleshooting, publishing workflow)
+- Middleware now properly structured in separate files
+- Config validation now throws proper errors for invalid URLs
+
 ## [1.1.0] - 2026-01-09
 
 ### Added

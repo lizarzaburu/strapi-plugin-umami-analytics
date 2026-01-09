@@ -1,9 +1,10 @@
 export default {
   getConfig: async (ctx: any) => {
-    const pluginConfig = ctx.state.strapi.config.get('plugin::umami-analytics');
+    // Get config using the correct Strapi plugin method
+    const umamiUrl = ctx.state.strapi.plugin('umami-analytics').config('umamiUrl');
     
     ctx.body = {
-      umamiUrl: pluginConfig?.umamiUrl || null,
+      umamiUrl: umamiUrl || null,
     };
   },
 };

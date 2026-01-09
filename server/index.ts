@@ -1,17 +1,20 @@
+import config from './config';
 import controllers from './controllers';
 import routes from './routes';
+import middlewares from './middlewares';
 
 export default {
+  config,
   controllers,
   routes,
+  middlewares,
   
   register({ strapi }: { strapi: any }) {
-    // Get Umami URL from plugin config
-    const pluginConfig = strapi.config.get('plugin::umami-analytics');
-    const umamiUrl = pluginConfig?.umamiUrl;
+    // Get Umami URL from plugin config using the correct Strapi method
+    const umamiUrl = strapi.plugin('umami-analytics').config('umamiUrl');
     
     if (!umamiUrl) {
-      strapi.log.warn('Umami Analytics plugin: umamiUrl not configured. CSP headers not configured.');
+      strapi.log.warn('Umami Analytics plugin: umamiUrl not configured. CSP headers will not be set.');
       strapi.log.warn('Add "umamiUrl" to your plugin config in config/plugins.ts');
       return;
     }
@@ -26,27 +29,8 @@ export default {
       return;
     }
 
-    // Extend CSP middleware configuration
-    strapi.server.use(async (ctx: any, next: any) => {
-      // Store original setHeader
-      const originalSetHeader = ctx.set.bind(ctx);
-      
-      // Override setHeader to modify CSP
-      ctx.set = function(field: string, val: string) {
-        if (field.toLowerCase() === 'content-security-policy') {
-          // Add Umami origin to frame-src if not already present
-          if (!val.includes(umamiOrigin)) {
-            val = val.replace(
-              /frame-src([^;]*);/,
-              `frame-src$1 ${umamiOrigin};`
-            );
-          }
-        }
-        return originalSetHeader(field, val);
-      };
-
-      await next();
-    });
+    // Register CSP middleware with configuration
+    strapi.server.use(middlewares.csp({ umamiOrigin }, { strapi }));
 
     strapi.log.info(`Umami Analytics plugin: CSP configured for ${umamiOrigin}`);
   },
