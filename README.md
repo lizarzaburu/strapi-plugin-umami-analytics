@@ -8,6 +8,7 @@ A Strapi plugin that displays Umami analytics in the admin panel with role-based
 - 📊 Embeds Umami share URL directly in admin panel
 - 🌐 Multilingual (English/German)
 - ⚡ Strapi 5 compatible
+- 🛡️ Automatic Content Security Policy (CSP) configuration
 
 ## Installation
 
@@ -45,40 +46,59 @@ npm install git+ssh://git@github.com:lizarzaburu/strapi-plugin-umami-analytics.g
 
 ## Setup
 
-### 1. Configure Environment Variable
+### 1. Get your Umami Share URL
 
-Add your Umami share URL to `.env`:
-
-```env
-STRAPI_ADMIN_UMAMI_URL=https://umami.yourdomain.com/share/xxxxxxxx/website-name
-```
-
-**Get your Umami share URL:**
 1. Log into your Umami dashboard
 2. Go to your website's analytics
 3. Click "Share" button
 4. Copy the share URL
 
-### 2. Enable Plugin
+### 2. Configure Plugin
 
-Enable the plugin in `config/plugins.ts`:
+Configure the plugin in `config/plugins.ts`:
 
 ```typescript
-export default {
+export default ({ env }) => ({
+  // ... other plugins
+  
   'umami-analytics': {
     enabled: true,
+    config: {
+      umamiUrl: env('UMAMI_URL'), // Or use a direct URL string
+    },
   },
-};
+});
 ```
 
-### 3. Set Permissions
+### 3. Add Environment Variable
+
+Add your Umami share URL to `.env`:
+
+```env
+UMAMI_URL=https://umami.yourdomain.com/share/xxxxxxxx/website-name
+```
+
+**Alternative:** You can also set the URL directly in the config without using an environment variable:
+
+```typescript
+'umami-analytics': {
+  enabled: true,
+  config: {
+    umamiUrl: 'https://umami.yourdomain.com/share/xxxxxxxx/website-name',
+  },
+},
+```
+
+**Note:** The plugin automatically configures Content Security Policy (CSP) headers to allow the Umami iframe based on the URL you configured. No manual middleware configuration needed!
+
+### 4. Set Permissions
 
 1. Go to **Settings** → **Roles** in Strapi admin
 2. Select a role (e.g., "Super Admin")
 3. Under **Plugins** → **Umami Analytics**, enable "Access Analytics"
 4. Save
 
-### 4. View Analytics
+### 5. View Analytics
 
 The "Analytics" menu item will appear in the sidebar for users with the permission.
 
@@ -203,12 +223,16 @@ Strapi will auto-reload with the changes when using `watch:link`.
 - Verify plugin is enabled in `config/plugins.ts`
 
 ### Analytics page shows "Not Configured"
-- Verify `STRAPI_ADMIN_UMAMI_URL` is set in `.env`
-- Restart Strapi after adding the variable
+- Verify `umamiUrl` is configured in `config/plugins.ts`
+- Verify the environment variable (e.g., `UMAMI_URL`) is set in `.env`
+- Restart Strapi after changing configuration
+- Check Strapi logs for plugin warnings
 
 ### Iframe doesn't load
 - Ensure URL is a Umami **share URL** (not admin URL)
 - Check that Umami instance allows iframe embedding
+- Check browser console for CSP errors (the plugin should handle this automatically)
+- Verify the URL format is correct (must be a valid URL)
 
 ### Installation Issues
 
