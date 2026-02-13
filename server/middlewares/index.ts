@@ -1,5 +1,1 @@
-import csp from './csp';
-
-export default {
-  csp,
-};
+export default {};

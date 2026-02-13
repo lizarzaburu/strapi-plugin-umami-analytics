@@ -37,7 +37,7 @@ const index = {
         defaultMessage: "Analytics"
       },
       Component: async () => {
-        const { AnalyticsPage } = await Promise.resolve().then(() => require("../_chunks/AnalyticsPage-BmCmNG6P.js"));
+        const { AnalyticsPage } = await Promise.resolve().then(() => require("../_chunks/AnalyticsPage-CtQXxp0U.js"));
         return AnalyticsPage;
       },
       permissions: [

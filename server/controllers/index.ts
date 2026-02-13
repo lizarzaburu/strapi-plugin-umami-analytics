@@ -1,10 +1,11 @@
-export default {
+const controller = ({ strapi }: { strapi: any }) => ({
   getConfig: async (ctx: any) => {
-    // Get config using the correct Strapi plugin method
-    const umamiUrl = ctx.state.strapi.plugin('umami-analytics').config('umamiUrl');
-    
+    const umamiUrl = strapi.plugin('umami-analytics').config('umamiUrl');
+
     ctx.body = {
       umamiUrl: umamiUrl || null,
     };
   },
-};
+});
+
+export default { controller };

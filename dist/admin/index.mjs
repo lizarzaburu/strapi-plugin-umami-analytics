@@ -36,7 +36,7 @@ const index = {
         defaultMessage: "Analytics"
       },
       Component: async () => {
-        const { AnalyticsPage } = await import("../_chunks/AnalyticsPage-kNED-BFw.mjs");
+        const { AnalyticsPage } = await import("../_chunks/AnalyticsPage-DrTIOFei.mjs");
         return AnalyticsPage;
       },
       permissions: [

@@ -1,38 +1,45 @@
+import { extendMiddlewareConfiguration } from '@strapi/utils';
+
 import config from './config';
 import controllers from './controllers';
 import routes from './routes';
-import middlewares from './middlewares';
 
 export default {
   config,
   controllers,
   routes,
-  middlewares,
-  
+
   register({ strapi }: { strapi: any }) {
-    // Get Umami URL from plugin config using the correct Strapi method
     const umamiUrl = strapi.plugin('umami-analytics').config('umamiUrl');
-    
+
     if (!umamiUrl) {
-      strapi.log.warn('Umami Analytics plugin: umamiUrl not configured. CSP headers will not be set.');
-      strapi.log.warn('Add "umamiUrl" to your plugin config in config/plugins.ts');
+      strapi.log.warn('Umami Analytics plugin: umamiUrl not configured.');
       return;
     }
 
-    // Extract origin from Umami URL
     let umamiOrigin: string;
     try {
-      const url = new URL(umamiUrl);
-      umamiOrigin = url.origin;
-    } catch (error) {
-      strapi.log.error('Umami Analytics plugin: Invalid umamiUrl format. Must be a valid URL.');
+      umamiOrigin = new URL(umamiUrl).origin;
+    } catch {
+      strapi.log.error('Umami Analytics plugin: Invalid umamiUrl format.');
       return;
     }
 
-    // Register CSP middleware with configuration
-    strapi.server.use(middlewares.csp({ umamiOrigin }, { strapi }));
+    // Extend security middleware CSP config at registration time
+    const middlewares = strapi.config.get('middlewares');
+    const updatedMiddlewares = extendMiddlewareConfiguration(middlewares, {
+      name: 'strapi::security',
+      config: {
+        contentSecurityPolicy: {
+          directives: {
+            'frame-src': ["'self'", umamiOrigin],
+          },
+        },
+      },
+    });
+    strapi.config.set('middlewares', updatedMiddlewares);
 
-    strapi.log.info(`Umami Analytics plugin: CSP configured for ${umamiOrigin}`);
+    strapi.log.info(`Umami Analytics plugin: CSP frame-src configured for ${umamiOrigin}`);
   },
 
   bootstrap({ strapi }: { strapi: any }) {
@@ -49,4 +56,3 @@ export default {
     strapi.admin.services.permission.actionProvider.registerMany(actions);
   },
 };
-

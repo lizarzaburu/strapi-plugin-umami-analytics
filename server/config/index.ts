@@ -6,7 +6,7 @@ export default {
     if (config.umamiUrl && typeof config.umamiUrl !== 'string') {
       throw new Error('umamiUrl must be a string');
     }
-    
+
     // Validate URL format if provided
     if (config.umamiUrl) {
       try {
