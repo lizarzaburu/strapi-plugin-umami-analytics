@@ -1,2 +1,3 @@
-declare const PluginIcon: () => import("react/jsx-runtime").JSX.Element;
+/// <reference types="react" />
+declare const PluginIcon: () => import("react").JSX.Element;
 export { PluginIcon };

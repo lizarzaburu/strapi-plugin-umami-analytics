@@ -10,7 +10,7 @@ const AnalyticsPage = () => {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const { data } = await get('/umami-analytics/config');
+        const { data } = await get<{ umamiUrl: string }>('/umami-analytics/config');
         setUmamiUrl(data.umamiUrl);
       } catch (err) {
         setError('Failed to load analytics configuration');
